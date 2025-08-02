@@ -86,29 +86,40 @@ def move_tile(board, row, col):
         board[empty_row][empty_col] = board[row][col]
         board[row][col] = 0
 
+#画像の読み込みとタイル生成の処理を関数化
+def load_and_create_tiles(image_path):
+    #画像ファイルを読み込み、タイルを生成して返す関数
+    try:
+        original_image = pygame.image.load(image_path)  # ここに自分の写真のパスを指定
+        original_image = pygame.transform.scale(original_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    except pygame.error as e:
+        print(f"画像ファイルの読み込み中にエラーが発生しました: {e}")
+        return None
+
+    tiles = []
+    for row in range(GRID_SIZE):
+        for col in range(GRID_SIZE):
+            x = col * TILE_SIZE
+            y = row * TILE_SIZE
+            tile_image = original_image.subsurface((x, y, TILE_SIZE, TILE_SIZE))
+            tiles.append(tile_image)
+
+    return tiles
+
+#デフォルトの画像パスを指定
+tiles = load_and_create_tiles("Birthday_image.png")
+if tiles is None:
+    print("タイルの生成に失敗しました。プログラムを終了します。")
+    sys.exit()
+
+#ボタンの定義
+button_text = "Select Foto"
+button_font = pygame.font.Font(None, 30)
+button_rect = pygame.Rect(SCREEN_WIDTH - 150, 20, 130, 40)#画面右上にボタンを配置
+
 #メインループの前に、ゲーム状態を管理する変数を用意
 runnning = True
 game_solved = False
-
-#画像の読み込み
-try:
-    original_image = pygame.image.load("your_photo.jpg") # ここに自分の写真のパスを指定
-    #500×500にリサイズ
-    original_image = pygame.transform.scale(original_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-except pygame.error as e:
-    print(f"画像ファイルの読み込み中にエラーが発生しました: {e}")
-    sys.exit()
-
-#タイルを分割してリストに格納
-tiles = []
-for row in range(GRID_SIZE):
-    for col in range(GRID_SIZE):
-        if board[row][col] != 0:  # 空白タイルは除外
-            x = col * TILE_SIZE
-            y = row * TILE_SIZE
-            #画像の左上座標とサイズを指定して、タイルを切り取る
-            tile_image = original_image.subsurface((x, y, TILE_SIZE, TILE_SIZE))
-            tiles.append(tile_image)
 
 #メインループ
 while runnning:
@@ -116,25 +127,41 @@ while runnning:
         if event.type == pygame.QUIT:
             runnning = False
 
-        #マウスのクリックを検出
+        #ボタンのクリックイベントを検出
         if event.type == pygame.MOUSEBUTTONDOWN:
-            #マウスクリックで座標を取得
             mouse_x, mouse_y = event.pos
 
-            #どのタイルがクリックされたか計算
-            col = mouse_x // TILE_SIZE
-            row = mouse_y // TILE_SIZE
+            #ボタンがクリックされたかどうかを判定
+            if button_rect.collidepoint((mouse_x, mouse_y)):
+                root = tk.Tk()
+                root.withdraw()
+                image_path = filedialog.askopenfilename(
+                    title="新しい画像を選択",
+                    filetypes=[("Image files", "*.jpg;*.jpeg;*.png")]
+                )
+                root.destroy()
 
-            #move_tile関数を呼び出してタイルを移動
-            move_tile(board, row, col)
+                if image_path:
+                    #新しい画像を読み込み、タイルを再生成し、ボードをシャッフル
+                    new_tiles = load_and_create_tiles(image_path)
+                    if new_tiles:
+                        tiles = new_tiles
+                        board = create_shuffled_board()
+                        game_solved = False # ゲーム状態をリセット
 
-            #ゲームが解けたかどうかをチェック
-            if board == goal_board:
-                game_solved = True
+            else:
+                #ボタン以外のクリックされたらタイルの移動処理
+                if not game_solved:
+                    col = mouse_x // TILE_SIZE
+                    row = mouse_y // TILE_SIZE
+                    move_tile(board, row, col)
 
+                    if board == goal_board:
+                        game_solved = True
+
+    #ボタン描画コードを追加
     #画面描画
-    screen.fill(WHITE)  # 背景を白に設定
-
+    screen.fill(WHITE)
 
     #タイルを描画
     for row in range(GRID_SIZE):
@@ -154,6 +181,12 @@ while runnning:
                 #タイルの画像を描画
                 screen.blit(tile_image, (x, y))
 
+    #ボタンを描画
+    pygame.draw.rect(screen, GRAY, button_rect)
+    pygame.draw.rect(screen, BLACK, button_rect, 2)  # ボタンの枠線
+    text_surface = button_font.render(button_text, True, BLACK)
+    text_rect = text_surface.get_rect(center=button_rect.center)
+    screen.blit(text_surface, text_rect)
 
     #ゲームがクリアされたらメッセージを表示
     if game_solved:
