@@ -186,7 +186,7 @@ while runnning:
                 # タイルの枠線を描画する処理を追加
                 # pygame.draw.rect()を使って、タイルの周囲に線を描画します。
                 # 引数: (surface, color, rect, width)
-                pygame.draw.rect(screen, BLACK, (x, y, TILE_SIZE, TILE_SIZE), 2)
+                pygame.draw.rect(screen, BLACK, (x, y, TILE_SIZE, TILE_SIZE), 1)
 
     #ボタンを描画
     pygame.draw.rect(screen, GRAY, button_rect)
