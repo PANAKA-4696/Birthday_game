@@ -1,8 +1,19 @@
+"""pygameのインストール"""
+import sys
+import subprocess
+
+try:
+    import pygame
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pygame"])
+    import pygame
+
+"""pygameのインストール"""
+
 #Birthday Game
 #5×5の数字のボードを作成し、0を空白として扱うゲーム
 
-import pygame
-import sys
+#import必要なライブラリ
 import random
 
 # Pygameの初期化
