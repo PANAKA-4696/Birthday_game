@@ -15,6 +15,8 @@ except ImportError:
 
 #import必要なライブラリ
 import random
+import tkinter as tk
+from tkinter import filedialog
 
 # Pygameの初期化
 pygame.init()
