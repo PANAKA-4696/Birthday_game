@@ -90,6 +90,26 @@ def move_tile(board, row, col):
 runnning = True
 game_solved = False
 
+#画像の読み込み
+try:
+    original_image = pygame.image.load("your_photo.jpg") # ここに自分の写真のパスを指定
+    #500×500にリサイズ
+    original_image = pygame.transform.scale(original_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+except pygame.error as e:
+    print(f"画像ファイルの読み込み中にエラーが発生しました: {e}")
+    sys.exit()
+
+#タイルを分割してリストに格納
+tiles = []
+for row in range(GRID_SIZE):
+    for col in range(GRID_SIZE):
+        if board[row][col] != 0:  # 空白タイルは除外
+            x = col * TILE_SIZE
+            y = row * TILE_SIZE
+            #画像の左上座標とサイズを指定して、タイルを切り取る
+            tile_image = original_image.subsurface((x, y, TILE_SIZE, TILE_SIZE))
+            tiles.append(tile_image)
+
 #メインループ
 while runnning:
     for event in pygame.event.get():
@@ -119,19 +139,20 @@ while runnning:
     #タイルを描画
     for row in range(GRID_SIZE):
         for col in range(GRID_SIZE):
-            tile_value = board[row][col]
-            if tile_value != 0:  # 0は空白なので描画しない
+            tile_number = board[row][col]
+            
+            #空きスペース(0)以外を描画
+            if tile_number != 0:
+                #tilesリストからタイルの画像を取得
+                #boardの値(1-24)とリストのインデックス(0-23)を対応させる
+                tile_image = tiles[tile_number - 1]
+
+                #タイルの位置を計算
                 x = col * TILE_SIZE
                 y = row * TILE_SIZE
 
-                #タイルの背景と枠線を描画
-                pygame.draw.rect(screen, GRAY, (x, y, TILE_SIZE, TILE_SIZE))
-                pygame.draw.rect(screen, BLACK, (x, y, TILE_SIZE, TILE_SIZE), 2)
-
-                #タイルの数字を描画
-                text_surface = font.render(str(tile_value), True, BLACK)
-                text_rect = text_surface.get_rect(center=(x + TILE_SIZE / 2, y + TILE_SIZE / 2))
-                screen.blit(text_surface, text_rect)
+                #タイルの画像を描画
+                screen.blit(tile_image, (x, y))
 
 
     #ゲームがクリアされたらメッセージを表示
