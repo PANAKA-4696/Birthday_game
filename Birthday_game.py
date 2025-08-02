@@ -22,6 +22,30 @@ for row in range(5):
             #tile_numberに対応する画像を (col * TILE_SIZE, row * TILE_SIZE) に描画
             pass  # ここに画像描画のコードを追加する必要があります
 
+def move_tile(board, row, col):
+    #指定されたタイルを隣接する空きスペースと交換する関数
+    GRID_SIZE = len(board)
+
+    #空きスペースの位置を探す
+    empty_row, empty_col = -1, -1
+    for r in range(GRID_SIZE):
+        for c in range(GRID_SIZE):
+            if board[r][c] == 0:
+                empty_row, empty_col = r, c
+                break
+        if empty_row != -1:
+            break
+
+    #クリックされたタイルと空きスペースが隣接しているか判定
+    #上下左右のいずれかに空きスペースがあればOK
+    is_adjacent = (abs(row - empty_row) == 1 and col == empty_col) or \
+                    (abs(col - empty_col) == 1 and row == empty_row)
+    
+    if is_adjacent:
+        #タイルを空きスペースと交換
+        board[empty_row][empty_col] = board[row][col]
+        board[row][col] = 0
+
 #メインループ
 for event in pygame.event.get():
     if event.type == pygame.QUIT:
@@ -36,4 +60,5 @@ for event in pygame.event.get():
         col = mouse_x // TILE_SIZE
         row = mouse_y // TILE_SIZE
 
-        print(f"クリックされたタイル: {row}, {col}")
+        #move_tile関数を呼び出してタイルを移動
+        move_tile(board, row, col)
