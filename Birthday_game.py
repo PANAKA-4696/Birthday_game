@@ -3,6 +3,7 @@
 
 import pygame
 import sys
+import random
 
 #ボードの立ち上げ
 board = [
@@ -80,3 +81,17 @@ while runnning:
             if board == goal_board:
                 game_solved = True
 
+#画面描画
+screen.fill(WHITE)  # 背景を白に設定
+
+
+#タイルを描画
+
+
+#ゲームがクリアされたらメッセージを表示
+if game_solved:
+    text_surface  = font.render("Congratulations! You solved the puzzle!", True, (0, 150, 0))
+    text_rect = text_surface .get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    screen.blit(text_surface , text_rect)
+
+pygame.display.flip()  # 画面を更新
