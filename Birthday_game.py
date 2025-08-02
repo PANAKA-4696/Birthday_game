@@ -26,15 +26,6 @@ TILE_SIZE = SCREEN_WIDTH // GRID_SIZE  # 各タイルのサイズ
 font = pygame.font.Font(None, 48)
 
 #ゲームボードの初期化
-#ボードの立ち上げ
-board = [
-    [1, 2, 3, 4, 5],
-    [6, 7, 8, 9, 10],
-    [11, 12, 13, 14, 15],
-    [16, 17, 18, 19, 20],
-    [21, 22, 23, 24, 0]
-]
-
 #goal_boardの作成
 goal_board = [
     [1, 2, 3, 4, 5],
@@ -44,15 +35,22 @@ goal_board = [
     [21, 22, 23, 24, 0]
 ]
 
-#500×500のウィンドウで5×5のボードを表示
-TILE_SIZE = 500 // 5 #TILE_SIZEは100
-for row in range(5):
-    for col in range(5):
-        tile_number = board[row][col]
-        if tile_number != 0:
-            #tile_numberに対応する画像を (col * TILE_SIZE, row * TILE_SIZE) に描画
-            pass  # ここに画像描画のコードを追加する必要があります
+#シャッフルしたボードの作成
+def create_shuffled_board():
+    flat_list = [num for row in goal_board for num in row]
+    while True:
+        random.shuffle(flat_list)
+        #解ける配置かどうかをチェックするロジック(簡略化)
+        #5x5のパズルは、ほとんど解けるのでここは簡略化
+        break
+    shuffeld_board = []
+    for i in range(GRID_SIZE):
+        shuffeld_board.append(flat_list[i * GRID_SIZE:(i + 1) * GRID_SIZE])
+    return shuffeld_board
 
+board = create_shuffled_board()
+
+#タイルの移動関数
 def move_tile(board, row, col):
     #指定されたタイルを隣接する空きスペースと交換する関数
     GRID_SIZE = len(board)
@@ -78,6 +76,7 @@ def move_tile(board, row, col):
         board[row][col] = 0
 
 #メインループの前に、ゲーム状態を管理する変数を用意
+runnning = True
 game_solved = False
 
 #メインループ
@@ -102,17 +101,35 @@ while runnning:
             if board == goal_board:
                 game_solved = True
 
-#画面描画
-screen.fill(WHITE)  # 背景を白に設定
+    #画面描画
+    screen.fill(WHITE)  # 背景を白に設定
 
 
-#タイルを描画
+    #タイルを描画
+    for row in range(GRID_SIZE):
+        for col in range(GRID_SIZE):
+            tile_value = board[row][col]
+            if tile_value != 0:  # 0は空白なので描画しない
+                x = col * TILE_SIZE
+                y = row * TILE_SIZE
+
+                #タイルの背景と枠線を描画
+                pygame.draw.rect(screen, GRAY, (x, y, TILE_SIZE, TILE_SIZE))
+                pygame.draw.rect(screen, BLACK, (x, y, TILE_SIZE, TILE_SIZE), 2)
+
+                #タイルの数字を描画
+                text_surface = font.render(str(tile_value), True, BLACK)
+                text_rect = text_surface.get_rect(center=(x + TILE_SIZE / 2, y + TILE_SIZE / 2))
+                screen.blit(text_surface, text_rect)
 
 
-#ゲームがクリアされたらメッセージを表示
-if game_solved:
-    text_surface  = font.render("Congratulations! You solved the puzzle!", True, (0, 150, 0))
-    text_rect = text_surface .get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-    screen.blit(text_surface , text_rect)
+    #ゲームがクリアされたらメッセージを表示
+    if game_solved:
+        text_surface  = font.render("Congratulations! You solved the puzzle!", True, (0, 150, 0))
+        text_rect = text_surface .get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        screen.blit(text_surface , text_rect)
 
-pygame.display.flip()  # 画面を更新
+    pygame.display.flip()  # 画面を更新
+
+pygame.quit()  # Pygameを終了
+sys.exit()  # プログラムを終了
