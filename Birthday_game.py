@@ -5,6 +5,27 @@ import pygame
 import sys
 import random
 
+# Pygameの初期化
+pygame.init()
+
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 500
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Birthday Game")
+
+#色の定義
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+
+#パズルの設定
+GRID_SIZE = 5  # 5x5のグリッド
+TILE_SIZE = SCREEN_WIDTH // GRID_SIZE  # 各タイルのサイズ
+
+#フォントの設定
+font = pygame.font.Font(None, 48)
+
+#ゲームボードの初期化
 #ボードの立ち上げ
 board = [
     [1, 2, 3, 4, 5],
