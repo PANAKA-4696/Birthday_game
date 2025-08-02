@@ -13,6 +13,15 @@ board = [
     [21, 22, 23, 24, 0]
 ]
 
+#goal_boardの作成
+goal_board = [
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10],
+    [11, 12, 13, 14, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 0]
+]
+
 #500×500のウィンドウで5×5のボードを表示
 TILE_SIZE = 500 // 5 #TILE_SIZEは100
 for row in range(5):
@@ -46,19 +55,28 @@ def move_tile(board, row, col):
         board[empty_row][empty_col] = board[row][col]
         board[row][col] = 0
 
+#メインループの前に、ゲーム状態を管理する変数を用意
+game_solved = False
+
 #メインループ
-for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-        runnning = False
+while runnning:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            runnning = False
 
-    #マウスのクリックを検出
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        #マウスクリックで座標を取得
-        mouse_x, mouse_y = event.pos
+        #マウスのクリックを検出
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            #マウスクリックで座標を取得
+            mouse_x, mouse_y = event.pos
 
-        #どのタイルがクリックされたか計算
-        col = mouse_x // TILE_SIZE
-        row = mouse_y // TILE_SIZE
+            #どのタイルがクリックされたか計算
+            col = mouse_x // TILE_SIZE
+            row = mouse_y // TILE_SIZE
 
-        #move_tile関数を呼び出してタイルを移動
-        move_tile(board, row, col)
+            #move_tile関数を呼び出してタイルを移動
+            move_tile(board, row, col)
+
+            #ゲームが解けたかどうかをチェック
+            if board == goal_board:
+                game_solved = True
+
