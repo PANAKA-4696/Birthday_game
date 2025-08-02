@@ -21,3 +21,19 @@ for row in range(5):
         if tile_number != 0:
             #tile_numberに対応する画像を (col * TILE_SIZE, row * TILE_SIZE) に描画
             pass  # ここに画像描画のコードを追加する必要があります
+
+#メインループ
+for event in pygame.event.get():
+    if event.type == pygame.QUIT:
+        runnning = False
+
+    #マウスのクリックを検出
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        #マウスクリックで座標を取得
+        mouse_x, mouse_y = event.pos
+
+        #どのタイルがクリックされたか計算
+        col = mouse_x // TILE_SIZE
+        row = mouse_y // TILE_SIZE
+
+        print(f"クリックされたタイル: {row}, {col}")
