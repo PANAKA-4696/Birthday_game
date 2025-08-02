@@ -109,7 +109,7 @@ def load_and_create_tiles(image_path):
     return tiles
 
 #デフォルトの画像パスを指定
-tiles = load_and_create_tiles("Birthday_image.png")
+tiles = load_and_create_tiles("Birthday_img.png")
 if tiles is None:
     print("タイルの生成に失敗しました。プログラムを終了します。")
     sys.exit()
@@ -182,6 +182,11 @@ while runnning:
 
                 #タイルの画像を描画
                 screen.blit(tile_image, (x, y))
+
+                # タイルの枠線を描画する処理を追加
+                # pygame.draw.rect()を使って、タイルの周囲に線を描画します。
+                # 引数: (surface, color, rect, width)
+                pygame.draw.rect(screen, BLACK, (x, y, TILE_SIZE, TILE_SIZE), 2)
 
     #ボタンを描画
     pygame.draw.rect(screen, GRAY, button_rect)
